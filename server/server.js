@@ -3,6 +3,12 @@ const app = express()
 
 const bodyParser = require('body-parser')
 
+//parse application/x-www-form-urlencode
+app.use(bodyParser.urlencoded({ extended: false}))
+
+// parse application/json
+app.use(bodyParser.json())
+
 app.get('/', function(req,res) {
   res.json('Hello World')
 })
@@ -12,7 +18,10 @@ app.get('/usuario', function(req,res) {
 })
 
 app.post('/usuario', function(req,res) {
-  res.json('Post Usuario')
+  let body = req.body;
+  res.json({
+    body
+  })
 })
 
 app.put('/usuario/:id', function(req,res) {
