@@ -1,3 +1,4 @@
+require('./config/config')
 const express = require('express')
 const app = express()
 
@@ -30,8 +31,6 @@ app.post('/usuario', function(req,res) {
         body
       })
   }
-
-
   
 })
 
@@ -49,6 +48,6 @@ app.delete('/usuario/:id', function(req,res) {
   })
 })
 
-app.listen(3000, () => {
+app.listen(process.env.PORT, () => {
   console.log("Escuchando el puerto 3000");
 })
