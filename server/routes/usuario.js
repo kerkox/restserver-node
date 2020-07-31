@@ -6,7 +6,27 @@ const Usuario = require("../models/usuario");
 const app = express();
 
 app.get("/usuario", function (req, res) {
-  res.json("get Usuario");
+  let from = req.query.from || 0;
+  from = Number(from);
+
+  let per_page = req.query.per_page || 5;
+  per_page = Number(per_page);
+  Usuario.find({})
+    .skip(from)
+    .limit(per_page)
+    .exec((err, usuarios) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          err,
+        });
+      }
+
+      res.json({
+        ok: true,
+        usuarios,
+      });
+    });
 });
 
 app.post("/usuario", function (req, res) {
