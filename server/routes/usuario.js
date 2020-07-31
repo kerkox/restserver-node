@@ -11,7 +11,7 @@ app.get("/usuario", function (req, res) {
 
   let per_page = req.query.per_page || 5;
   per_page = Number(per_page);
-  Usuario.find({})
+  Usuario.find({}, "nombre email role estado google img")
     .skip(from)
     .limit(per_page)
     .exec((err, usuarios) => {
