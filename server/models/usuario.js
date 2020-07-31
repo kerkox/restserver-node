@@ -38,6 +38,10 @@ let usuarioSchema = new Schema({
   google: {
     type: Boolean,
     default: false
+  },
+  deleted_at: {
+    type: Date,
+    default: null
   }
 });
 
