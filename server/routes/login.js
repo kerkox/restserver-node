@@ -53,13 +53,24 @@ async function verify(token) {
       //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
   });
   const payload = ticket.getPayload();  
+  return {
+    nombre: payload.name,
+    email: payload.email,
+    img: payload.picture,
+    google: true
+  }
 }
 
-app.post('/google', (req,res)=> {
+app.post('/google', async (req,res)=> {
   let token = req.body.idtoken;
-  verify(token)
+  let googleUser = await verify(token).catch( e => {
+    return res.status(403).json({
+      ok:false,
+      err: e
+    })
+  })
   res.json({
-    token
+    user: googleUser
   })
 })
 
