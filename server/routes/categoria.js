@@ -23,6 +23,8 @@ app.get('/categorias', verificaToken, (req, res) => {
     deleted_at: null
   };
   Categoria.find(filter, "descripcion deleted_at usuario")
+    .sort('descripcion')
+    .populate('usuario', 'nombre email')
     .skip(from)
     .limit(per_page)
     .exec((err, categorias) => {
