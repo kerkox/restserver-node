@@ -83,6 +83,12 @@ app.post('/categorias', verificaToken, (req, res) => {
 
   categoria.save((err, categoriaDB) => {
     if (err) {
+      return res.status(500).json({
+        ok: false,
+        err
+      })
+    }
+    if (!categoriaDB) {
       return res.status(400).json({
         ok: false,
         err,
