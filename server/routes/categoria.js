@@ -116,10 +116,17 @@ app.put('/categorias/:id', verificaToken, (req, res) => {
     },
     (err, categoriaDB) => {
       if (err) {
-        return res.status(400).json({
+        return res.status(500).json({
           ok: false,
           err,
         });
+      }
+      if (!categoriaDB) {
+        return res.status(404).json({
+          err: {
+            message: "El ID de la Categoria no existe"
+          }
+        })
       }
 
       res.json({
@@ -137,14 +144,21 @@ app.delete('/categorias/:id', [verificaToken, verificaAdmin_Role], (req, res) =>
   // solo un administrador puede borrar categorias
   Categoria.findByIdAndRemove(req.params.id, (err, categoria) => {
     if (err) {
-      return res.status(400).json({
+      return res.status(500).json({
         ok: false,
         err,
       });
     }
+    if (!categoriaDB) {
+      return res.status(404).json({
+        err: {
+          message: "El ID de la Categoria no existe"
+        }
+      })
+    }
     res.json({
       ok: true,
-      categoria
+      message: 'Categoria borrada'
     })
 
   })
