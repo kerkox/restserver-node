@@ -129,7 +129,19 @@ app.put('/categorias/:id', verificaToken, (req, res) => {
 // ========================================
 app.delete('/categorias/:id', [verificaToken, verificaAdmin_Role], (req, res) => {
   // solo un administrador puede borrar categorias
+  Categoria.findByIdAndRemove(req.params.id, (err, categoria) => {
+    if (err) {
+      return res.status(400).json({
+        ok: false,
+        err,
+      });
+    }
+    res.json({
+      ok: true,
+      categoria
+    })
 
+  })
 });
 
 
