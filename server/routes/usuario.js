@@ -2,18 +2,23 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const _ = require("underscore");
 const Usuario = require("../models/usuario");
-const { verificaToken, verificaAdmin_Role } = require("../middlewares/autenticacion");
+const {
+  verificaToken,
+  verificaAdmin_Role
+} = require("../middlewares/autenticacion");
 
 const app = express();
 
 app.get("/usuario", verificaToken, function (req, res) {
-  
+
   let from = req.query.from || 0;
   from = Number(from);
 
   let per_page = req.query.per_page || 5;
   per_page = Number(per_page);
-  let filter = { deleted_at: null };
+  let filter = {
+    deleted_at: null
+  };
   Usuario.find(filter, "nombre email role estado google img deleted_at")
     .skip(from)
     .limit(per_page)
@@ -35,7 +40,7 @@ app.get("/usuario", verificaToken, function (req, res) {
     });
 });
 
-app.post("/usuario", [verificaToken, verificaAdmin_Role],function (req, res) {
+app.post("/usuario", [verificaToken, verificaAdmin_Role], function (req, res) {
   let body = req.body;
   let usuario = new Usuario({
     nombre: body.nombre,
@@ -59,14 +64,16 @@ app.post("/usuario", [verificaToken, verificaAdmin_Role],function (req, res) {
   });
 });
 
-app.put("/usuario/:id",[verificaToken, verificaAdmin_Role], function (req, res) {
+app.put("/usuario/:id", [verificaToken, verificaAdmin_Role], function (req, res) {
   let id = req.params.id;
   let body = _.pick(req.body, ["nombre", "email", "img", "role", "estado"]);
 
   Usuario.findByIdAndUpdate(
     id,
-    body,
-    { new: true, runValidators: true },
+    body, {
+      new: true,
+      runValidators: true
+    },
     (err, usuarioDB) => {
       if (err) {
         return res.status(400).json({
@@ -83,13 +90,18 @@ app.put("/usuario/:id",[verificaToken, verificaAdmin_Role], function (req, res) 
   );
 });
 
-app.delete("/usuario/:id",[verificaToken, verificaAdmin_Role], function (req, res) {
+app.delete("/usuario/:id", [verificaToken, verificaAdmin_Role], function (req, res) {
   let id = req.params.id;
 
-  let _delete = { estado: false, deleted_at: new Date() };
-  Usuario.findByIdAndUpdate(id, _delete, { new: true }, (err, usuarioDB) => {
+  let _delete = {
+    estado: false,
+    deleted_at: new Date()
+  };
+  Usuario.findByIdAndUpdate(id, _delete, {
+    new: true
+  }, (err, usuarioDB) => {
     if (err) {
-      return res.status(400).json({
+      return res.status(500).json({
         ok: false,
         err,
       });

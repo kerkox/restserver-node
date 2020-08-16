@@ -3,6 +3,7 @@ const {
   verificaToken
 } = require('../middlewares/autenticacion');
 let app = express();
+const _ = require('underscore')
 const Producto = require('../models/producto')
 
 // ========================================
@@ -115,9 +116,32 @@ app.post('/productos', verificaToken, (req, res) => {
 // Actualizar un producto
 // ========================================
 app.put('/productos/:id', verificaToken, (req, res) => {
-  // grabar el usuario
-  // grabar una categoria del listado
-
+  let id = req.params.id
+  let body = _.pick(req.body, ["nombre", "precioUni", "descripcion", "categoria"])
+  body.usuario = req.usaurio._id
+  Producto.findByIdAndUpdate(id, body, {
+      new: true,
+      runValidators: true
+    },
+    (err, productoDB) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          err,
+        });
+      }
+      if (!productoDB) {
+        return res.status(404).json({
+          err: {
+            message: "El ID del producto no existe"
+          }
+        })
+      }
+      res.json({
+        ok: true,
+        producto: productoDB
+      })
+    })
 })
 
 
@@ -127,7 +151,30 @@ app.put('/productos/:id', verificaToken, (req, res) => {
 app.delete('/productos/:id', verificaToken, (req, res) => {
   // cambiar el estado a disponible false
   // setear el valor de deleted_at
-
+  let id = req.params.id;
+  let _delete = {
+    disponible: false,
+    deleted_at: new Date()
+  }
+  Producto.findByIdAndUpdate(id, _delete, (err, productoDB) => {
+    if (err) {
+      return res.status(500).json({
+        ok: false,
+        err,
+      });
+    }
+    if (!productoDB) {
+      return res.status(404).json({
+        err: {
+          message: "El ID del producto no existe"
+        }
+      })
+    }
+    res.json({
+      ok: true,
+      message: "Producto borrado correctamente"
+    })
+  })
 })
 
 
