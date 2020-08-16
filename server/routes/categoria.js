@@ -1,7 +1,9 @@
 const express = require('express');
+const _ = require('underscore');
 
 let {
-  verificaToken
+  verificaToken,
+  verificaAdmin_Role
 } = require('../middlewares/autenticacion')
 
 let app = express();
@@ -97,14 +99,37 @@ app.post('/categorias', verificaToken, (req, res) => {
 // Actualizar una categoria
 // ========================================
 app.put('/categorias/:id', verificaToken, (req, res) => {
-  // regresa la nueva categoria
+  let id = req.params.id;
+  let body = _.pick(req.body, ["descripcion", "usuario"]);
+
+  Categoria.findByIdAndUpdate(
+    id,
+    body, {
+      new: true,
+      runValidators: true
+    },
+    (err, categoriaDB) => {
+      if (err) {
+        return res.status(400).json({
+          ok: false,
+          err,
+        });
+      }
+
+      res.json({
+        ok: true,
+        categoria: categoriaDB,
+      });
+    }
+  );
 });
 
 // ========================================
 // Borrar una nueva categoria
 // ========================================
-app.delete('/categorias/:id', verificaToken, (req, res) => {
+app.delete('/categorias/:id', [verificaToken, verificaAdmin_Role], (req, res) => {
   // solo un administrador puede borrar categorias
+
 });
 
 
