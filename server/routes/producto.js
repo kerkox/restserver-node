@@ -22,11 +22,11 @@ app.get('/productos', verificaToken, (req, res) => {
     deleted_at: null,
   };
   Producto.find(filter)
+    .skip(from)
+    .limit(per_page)
     .sort('nombre')
     .populate('usuario', 'nombre email')
     .populate('categoria', 'descripcion')
-    .skip(from)
-    .limit(per_page)
     .exec((err, productos) => {
       if (err) {
         return res.status(500).json({
@@ -53,26 +53,29 @@ app.get('/productos/:id', verificaToken, (req, res) => {
   // trae todos los productos 
   // populate: usuario categoria
   let id = req.params.id
-  Producto.findById(id, (err, productoDB) => {
-    if (err) {
-      return res.status(500).json({
-        ok: false,
-        err,
-      });
-    }
-    if (!productoDB) {
-      return res.status(404).json({
-        err: {
-          message: "El ID del producto no existe"
-        }
+  Producto.findById(id, )
+    .populate('usuario', 'nombre email')
+    .populate('categoria', 'descripcion')
+    .exec((err, productoDB) => {
+      if (err) {
+        return res.status(500).json({
+          ok: false,
+          err,
+        });
+      }
+      if (!productoDB) {
+        return res.status(404).json({
+          err: {
+            message: "El ID del producto no existe"
+          }
+        })
+      }
+      res.json({
+        ok: true,
+        producto: productoDB
       })
-    }
-    res.json({
-      ok: true,
-      producto: productoDB
-    })
 
-  })
+    })
 })
 
 // ========================================
