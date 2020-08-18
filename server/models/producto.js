@@ -32,6 +32,10 @@ var productoSchema = new Schema({
     deleted_at: {
         type: Date,
         default: null
+    },
+    img: {
+        type: String,
+        required: false
     }
 });
 
